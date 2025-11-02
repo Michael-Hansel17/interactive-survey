@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 interface ProgressBarProps {
     current: number;
@@ -16,6 +16,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ current, total }) => {
             ></div>
         </div>
     );
-}
+};
 
-export default ProgressBar
+export default ProgressBar;
