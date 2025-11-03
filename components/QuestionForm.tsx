@@ -96,7 +96,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         flex gap-3
         ${questionIndex > 0 ? "justify-between" : "justify-end"}
         sm:static sm:mt-0
-        fixed left-0 right-0 bottom-0 z-20
+        z-20
         
       `}
             >

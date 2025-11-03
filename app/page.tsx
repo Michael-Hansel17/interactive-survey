@@ -127,7 +127,7 @@ export default function Home() {
             >
                 <div className="w-full max-w-2xl text-center bg-white p-8 border-4 border-black shadow-[10px_10px_0px_#000]">
                     <h1 className="text-4xl md:text-5xl font-extrabold font-mono mb-4 text-green-600">
-                        ROOAARSOME!
+                        BAA-MAZING!
                     </h1>
                     <p className="text-xl mb-6">Thanks for your answers.</p>
 
@@ -195,7 +195,7 @@ export default function Home() {
                                 onSubmit={handleNextQuestion}
                                 onPrevious={handlePreviousQuestion}
                                 questionIndex={history.length}
-                                isLastQuestion={false}
+                                isLastQuestion={currentQuestion.next === null ? true : false}
                             />
                         )}
                     </div>
