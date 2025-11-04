@@ -13,6 +13,7 @@ import {
 } from "../helper";
 import type { QuestionId, Question, SubmitStatus, Answers } from "../types";
 import QuestionForm from "@/components/QuestionForm";
+import { Volume2, VolumeX } from "lucide-react";
 
 export default function Home() {
     const firstQuestionId = QUESTIONS[0].id as QuestionId;
@@ -24,10 +25,72 @@ export default function Home() {
     const [submitStatus, setSubmitStatus] = useState<SubmitStatus>("idle");
     const [submitError, setSubmitError] = useState<string>("");
     const [showVideo, setShowVideo] = useState(false);
-    const [showEndControls, setShowEndControls] = useState(false); 
+    const [showEndControls, setShowEndControls] = useState(false);
     const submittingRef = useRef(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const isFinished = currentQuestionId === null;
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [isMuted, setIsMuted] = useState(true);
+    const [hasInteracted, setHasInteracted] = useState(false);
+
+    useEffect(() => {
+        const handleFirstInteraction = () => {
+            setHasInteracted(true);
+            const audio = audioRef.current;
+            if (audio) {
+                audio.muted = false;
+                audio.volume = 0.5;
+                setIsMuted(false);
+                audio.play().catch(() => console.warn("Play blocked"));
+            }
+            window.removeEventListener("click", handleFirstInteraction);
+            window.removeEventListener("keydown", handleFirstInteraction);
+        };
+
+        window.addEventListener("click", handleFirstInteraction);
+        window.addEventListener("keydown", handleFirstInteraction);
+
+        return () => {
+            window.removeEventListener("click", handleFirstInteraction);
+            window.removeEventListener("keydown", handleFirstInteraction);
+        };
+    }, []);
+
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        // Pause when tab loses visibility (user switches app/tab)
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                audio.pause();
+            } else if (!isMuted && hasInteracted) {
+                // resume only if user had enabled sound
+                audio.play().catch(() => {});
+            }
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+        return () =>
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange
+            );
+    }, [isMuted, hasInteracted]);
+
+    const toggleSound = () => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        if (isMuted) {
+            audio.muted = false;
+            audio.volume = 0.5;
+            setIsMuted(false);
+        } else {
+            audio.muted = true;
+            setIsMuted(true);
+        }
+    };
 
     const currentQuestion: Question | null = useMemo(
         () => (currentQuestionId ? QUESTION_MAP[currentQuestionId] : null),
@@ -268,6 +331,30 @@ export default function Home() {
                     </div>
                 </main>
             </div>
+
+            <audio
+                ref={audioRef}
+                src="/lagu.mp3"
+                loop
+                autoPlay
+                muted
+                preload="auto"
+            />
+
+            {/* 🔊 Floating sound toggle button */}
+            {hasInteracted && (
+                <button
+                    onClick={toggleSound}
+                    className="fixed top-4 right-4 p-4 md: bg-yellow-400 border-2 border-black rounded-full shadow-[4px_4px_0px_#000] hover:scale-105 active:translate-y-0.5 transition-all"
+                    aria-label={isMuted ? "Turn on sound" : "Turn off sound"}
+                >
+                    {isMuted ? (
+                        <VolumeX className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                    ) : (
+                        <Volume2 className="w-4 h-4 md:w-6 md:h-6 text-black" />
+                    )}
+                </button>
+            )}
         </div>
     );
 }
