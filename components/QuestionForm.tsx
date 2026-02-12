@@ -41,19 +41,15 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
     const handleOptionPick = (optionValue: string) => {
         onChange(optionValue);
-        // setTimeout(() => {
-        //     formRef.current?.requestSubmit();
-        // }, 200);
     };
 
     return (
         <form
             ref={formRef}
             onSubmit={handleFormSubmit}
-            className="w-full flex flex-col gap-5 relative z-10" // Gap dikurangi sedikit (6 -> 5)
+            className="w-full flex flex-col gap-5 relative z-10"
             noValidate={false}
         >
-            {/* PERTANYAAN: Ukuran dikecilkan (text-3xl -> text-2xl) */}
             <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-white mb-2 drop-shadow-md">
                 {question.label}
             </h2>
@@ -66,7 +62,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     onChange={(e) => onChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     required={question.required}
-                    // INPUT: text-xl -> text-lg
                     className="w-full text-lg p-4 bg-black/40 text-white border-2 border-[var(--color-border)] rounded-xl focus:outline-none focus:border-primary focus:shadow-[0_0_8px_var(--color-primary)] transition-all placeholder:text-gray-500 font-bold tracking-wide"
                     autoFocus
                 />
@@ -99,7 +94,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                                 required={question.required}
                             />
                             
-                            {/* OPSI: text-xl -> text-lg */}
                             <span className={`text-lg font-bold transition-all ${value === opt.value ? 'text-neon-blue' : 'text-gray-300 group-hover:text-white'}`}>
                                 {opt.label}
                             </span>
@@ -113,7 +107,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     <button
                         type="button"
                         onClick={onPrevious}
-                        // TOMBOL: text-lg -> text-base, padding dikurangi sedikit
                         className="flex-1 text-base font-bold text-white py-3 px-5 rounded-xl border-2 border-white bg-transparent hover:bg-white hover:text-black hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-wider shadow-[0_0_5px_rgba(255,255,255,0.2)]"
                     >
                         Back
@@ -121,7 +114,6 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 )}
                 <button
                     type="submit"
-                    // TOMBOL: text-lg -> text-base, padding dikurangi sedikit
                     className="flex-1 text-base font-bold text-white bg-transparent border-2 border-primary py-3 px-5 rounded-xl hover:bg-primary/20 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_15px_var(--color-primary)] uppercase tracking-wider"
                 >
                     {isLastQuestion ? "Submit" : "Next"}
