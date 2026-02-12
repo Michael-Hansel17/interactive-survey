@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 
-type Answers = Record<string, string>;
-
 function getJwtClient() {
-    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!;
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, "\n");
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY
+        ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n")
+        : undefined;
+
+    if (!clientEmail || !privateKey) {
+        throw new Error("Missing Google Credentials in .env");
+    }
 
     return new google.auth.JWT({
         email: clientEmail,
@@ -16,29 +20,34 @@ function getJwtClient() {
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
-        const answers: Answers = body?.answers ?? {};
+        // Frontend mengirim JSON berisi object answers langsung: { namaLengkap: "...", ... }
+        const answers = await req.json();
 
-        const phone = answers["Nomor Telepon"]
-            ? `'${answers["Nomor Telepon"]}`
+        // Format Nomor Telepon (tambah kutip satu ' agar tidak dianggap rumus oleh Excel/Sheets)
+        const phone = answers["nomorTelepon"]
+            ? `'${answers["nomorTelepon"]}`
             : "";
 
-        const timestamp = new Date().toISOString();
+        const timestamp = new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" });
+        
+        // Mapping Data: Urutan ini HARUS SAMA dengan urutan kolom di Google Sheet nanti
         const row = [
             timestamp,
-            answers["Nama Lengkap"] || "",
-            phone || "",
-            answers["Status CG"] || "",
-            answers["Tempat Tinggal"] || "",
-            answers["Tempat Kuliah"] || "",
-            answers["Nomor CG"] || "",
+            answers["namaLengkap"] || "-",
+            phone,
+            answers["statusCG"] || "-",
+            answers["tempatTinggal"] || "-",
+            answers["tempatKuliah"] || "-", // Ini akan berisi "UMN", "Pradita", dll.
+            answers["nomorCG"] || "-",
         ];
 
         const auth = getJwtClient();
         const sheets = google.sheets({ version: "v4", auth });
 
-        const spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
+        const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
         const sheetName = process.env.GOOGLE_SHEET_NAME || "Sheet1";
+        
+        // Range A:G artinya kita mengisi kolom A sampai G
         const range = `${sheetName}!A:G`;
 
         await sheets.spreadsheets.values.append({

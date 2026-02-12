@@ -10,29 +10,40 @@ export type Answers = Record<string, string>;
 export type QuestionType = "text" | "choice";
 
 export type QuestionId =
-    | "Nama Lengkap"
-    | "Nomor Telepon"
-    | "Status CG"
-    | "Tempat Tinggal"
-    | "Tempat Kuliah"
-    | "Nomor CG";
+    | "namaLengkap"
+    | "nomorTelepon"
+    | "statusCG"
+    | "tempatTinggal"
+    | "tempatKuliah"
+    | "nomorCG";
 
 export type Question = {
     id: QuestionId;
-    text: string;
+    
+    // UBAH: 'text' diganti jadi 'label' agar konsisten dengan component QuestionForm
+    label: string; 
+    
     type: QuestionType;
     placeholder?: string;
-    // untuk input <input />
+    
+    // Props untuk input HTML
     inputProps?: {
-        inputMode?: "text" | "tel" | "numeric";
-        pattern?: string; // regex string
+        inputMode?: "text" | "tel" | "numeric" | "email";
+        pattern?: string; // string regex untuk validasi
     };
-    // untuk pilihan <select / radio>
+    
+    // Untuk pilihan ganda (radio button)
     options?: { label: string; value: string }[];
-    // next linear default (kalau tidak ada cabang)
+    
+    // Navigasi Linear (Default jika tidak ada percabangan)
     next?: QuestionId | null;
-    // cabang berdasarkan jawaban user (dipakai kalau type === 'choice' atau ingin bercabang)
-    branch?: { value: string | RegExp; goTo: QuestionId }[];
+    
+    // Navigasi Cabang (Branching) berdasarkan jawaban
+    branch?: { 
+        value: string; // Jawaban pemicu (misal: "Sudah")
+        goTo: QuestionId; // Tujuan jika jawaban cocok
+    }[];
+    
     required?: boolean;
 };
 

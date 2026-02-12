@@ -1,19 +1,73 @@
 @import "tailwindcss";
 
 :root {
-    --background: #ffffff;
-    --foreground: #171717;
+  /* Base Background: Tetap Ungu Gelap */
+  --background: #232136; 
+  --foreground: #e0def4;
 }
 
 @theme inline {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-retro: var(--font-retro);
+
+  /* PALET WARNA (Kita pakai untuk referensi) */
+  --color-primary: #ff6ac1;      /* Hot Pink */
+  --color-secondary: #4deeea;    /* Cyan Electric */
+  --color-accent: #ffe700;       /* Kuning Neon */
+  --color-card: #2a273f;
+  --color-border: #56526e;
 }
 
 body {
-    background: var(--background);
-    color: var(--foreground);
-    font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-retro), sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+
+  /* --- MAGIC HAPPENS HERE --- */
+  /* Kita menumpuk pola titik dengan 3 sorotan warna besar (Pink, Cyan, Gold) */
+  background-image: 
+      /* 1. Pola Titik-titik (Paling atas, transparan) */
+      radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      
+      /* 2. Highlight Pink (Pojok Kiri Atas) - Opacity 15% */
+      radial-gradient(circle at 0% 0%, rgba(234, 154, 151, 0.15) 0%, transparent 60%),
+      
+      /* 3. Highlight Cyan (Pojok Kanan Bawah) - Opacity 15% */
+      radial-gradient(circle at 100% 100%, rgba(156, 207, 216, 0.15) 0%, transparent 60%),
+      
+      /* 4. Highlight Emas/Kuning (Tengah Kiri) - Opacity 10% */
+      radial-gradient(circle at 0% 50%, rgba(246, 193, 119, 0.1) 0%, transparent 50%),
+      
+      /* 5. Highlight Ungu Terang (Tengah Kanan) */
+      radial-gradient(circle at 100% 0%, rgba(196, 167, 231, 0.1) 0%, transparent 50%);
+
+  /* Mengatur ukuran pola titik, gradien lainnya akan menyesuaikan cover */
+  background-size: 24px 24px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-attachment: fixed; /* Agar sorotan cahaya tetap diam saat scroll */
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
 }
+
+/* Neon Pink (Judul) - Dikurangi dari 5 layer menjadi 3 layer tipis */
+.text-neon {
+  color: #fff;
+  text-shadow:
+    0 0 2px #fff,                 /* Layer 1: Putih tajam */
+    0 0 4px var(--color-primary), /* Layer 2: Glow warna sedikit */
+    0 0 10px var(--color-primary); /* Layer 3: Glow warna menyebar halus */
+}
+
+/* Neon Biru (Pilihan) - Dikurangi blur-nya */
+.text-neon-blue {
+  color: #fff;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 4px var(--color-secondary),
+    0 0 8px var(--color-secondary);
+}
+
+/* Box Shadow Neon (Untuk Kotak Input) */
+/* .shadow-neon {
+  box-shadow: 0 0 15px var(--color-primary), inset 0 0 10px var(--color-primary);
+} */

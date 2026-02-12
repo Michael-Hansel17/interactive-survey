@@ -41,18 +41,23 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
     const handleOptionPick = (optionValue: string) => {
         onChange(optionValue);
-        setTimeout(() => {
-            formRef.current?.requestSubmit();
-        }, 0);
+        // setTimeout(() => {
+        //     formRef.current?.requestSubmit();
+        // }, 200);
     };
 
     return (
         <form
             ref={formRef}
             onSubmit={handleFormSubmit}
-            className="w-full flex flex-col gap-4 max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-4xl"
+            className="w-full flex flex-col gap-5 relative z-10" // Gap dikurangi sedikit (6 -> 5)
             noValidate={false}
         >
+            {/* PERTANYAAN: Ukuran dikecilkan (text-3xl -> text-2xl) */}
+            <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-white mb-2 drop-shadow-md">
+                {question.label}
+            </h2>
+
             {question.type === "text" && (
                 <input
                     type="text"
@@ -61,8 +66,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     onChange={(e) => onChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     required={question.required}
-                    {...(question.inputProps || {})}
-                    className="w-full text-lg sm:text-xl p-4 sm:p-5 bg-white border-2 border-black rounded-lg sm:rounded-none focus:outline-none focus:ring-4 focus:ring-yellow-400 font-mono shadow-[4px_4px_0px_#000]"
+                    // INPUT: text-xl -> text-lg
+                    className="w-full text-lg p-4 bg-black/40 text-white border-2 border-[var(--color-border)] rounded-xl focus:outline-none focus:border-primary focus:shadow-[0_0_8px_var(--color-primary)] transition-all placeholder:text-gray-500 font-bold tracking-wide"
                     autoFocus
                 />
             )}
@@ -72,48 +77,54 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     {question.options.map((opt) => (
                         <label
                             key={opt.value}
-                            className={`flex items-center gap-3 p-3 border-2 border-black bg-white cursor-pointer font-mono text-lg shadow-[3px_3px_0px_#000] hover:bg-yellow-100 transition-all ${
-                                value === opt.value ? "bg-yellow-200" : ""
+                            className={`group flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
+                                value === opt.value 
+                                    ? "bg-primary/20 border-primary shadow-[0_0_8px_rgba(255,106,193,0.3)]" 
+                                    : "bg-black/30 border-transparent hover:border-white/30 hover:bg-black/50"
                             }`}
                         >
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                                value === opt.value ? 'border-primary bg-primary shadow-[0_0_6px_var(--color-primary)]' : 'border-gray-500'
+                            }`}>
+                                {value === opt.value && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                            </div>
+                            
                             <input
                                 type="radio"
                                 name={question.id}
                                 value={opt.value}
                                 checked={value === opt.value}
                                 onChange={() => handleOptionPick(opt.value)}
-                                className="w-5 h-5 accent-yellow-400"
+                                className="hidden"
                                 required={question.required}
                             />
-                            <span>{opt.label}</span>
+                            
+                            {/* OPSI: text-xl -> text-lg */}
+                            <span className={`text-lg font-bold transition-all ${value === opt.value ? 'text-neon-blue' : 'text-gray-300 group-hover:text-white'}`}>
+                                {opt.label}
+                            </span>
                         </label>
                     ))}
                 </div>
             )}
 
-            <div
-                className={`
-        flex gap-3
-        ${questionIndex > 0 ? "justify-between" : "justify-end"}
-        sm:static sm:mt-0
-        z-20
-        
-      `}
-            >
+            <div className="flex gap-4 mt-6 pt-4 border-t border-[var(--color-border)]">
                 {questionIndex > 0 && (
                     <button
                         type="button"
                         onClick={onPrevious}
-                        className="flex-1 text-base sm:text-lg font-bold bg-white text-black p-4 border-2 border-black rounded-lg sm:rounded-none hover:bg-gray-100 active:translate-y-1 active:translate-x-1 active:shadow-none transition-all shadow-[4px_4px_0px_#000]"
+                        // TOMBOL: text-lg -> text-base, padding dikurangi sedikit
+                        className="flex-1 text-base font-bold text-white py-3 px-5 rounded-xl border-2 border-white bg-transparent hover:bg-white hover:text-black hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-wider shadow-[0_0_5px_rgba(255,255,255,0.2)]"
                     >
-                        &lt;- Prev
+                        Back
                     </button>
                 )}
                 <button
                     type="submit"
-                    className={`flex-1 text-base sm:text-lg font-bold bg-yellow-400 text-black p-4 border-2 border-black rounded-lg sm:rounded-none hover:bg-yellow-500 active:translate-y-1 active:translate-x-1 active:shadow-none transition-all shadow-[4px_4px_0px_#000]`}
+                    // TOMBOL: text-lg -> text-base, padding dikurangi sedikit
+                    className="flex-1 text-base font-bold text-white bg-transparent border-2 border-primary py-3 px-5 rounded-xl hover:bg-primary/20 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_15px_var(--color-primary)] uppercase tracking-wider"
                 >
-                    {isLastQuestion ? "Finish!" : "Next ->"}
+                    {isLastQuestion ? "Submit" : "Next"}
                 </button>
             </div>
         </form>

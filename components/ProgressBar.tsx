@@ -9,11 +9,18 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ current, total }) => {
     const percentage = total > 0 ? (current / total) * 100 : 0;
 
     return (
-        <div className="w-full bg-white border-2 border-black rounded-none p-1 shadow-[4px_4px_0px_#000]">
+        // UBAH: rounded-full -> rounded-lg (Radius lebih kecil)
+        <div className="w-full bg-black/30 border border-[var(--color-border)] rounded-lg h-6 sm:h-8 overflow-hidden relative shadow-inner">
+            
+            {/* Bagian Bar yang Terisi */}
+            {/* UBAH: rounded-l-full -> rounded-l-md (Menyesuaikan container) */}
             <div
-                className="bg-lime-400 h-6 transition-all duration-500 ease-out border-2 border-black"
+                className="bg-secondary h-full transition-all duration-500 ease-out rounded-l-md relative"
                 style={{ width: `${percentage}%` }}
-            ></div>
+            >
+                {/* Efek kilauan kaca tetap ada */}
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/30 to-transparent"></div>
+            </div>
         </div>
     );
 };

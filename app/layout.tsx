@@ -1,41 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import type { Viewport } from "next";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-retro",
+  subsets: ["latin"],
+  // Tambahkan '700' jika belum ada, tapi Space Grotesk biasanya support variable weight
+  weight: ["400", "700"], 
 });
 
 export const metadata: Metadata = {
-    title: "Sheepy Survey",
-};
-
-export const viewport: Viewport = {
-    width: "device-width",
-    initialScale: 1,
-    viewportFit: "cover",
-    maximumScale: 1,
+  title: "Neon Survey",
+  description: "A retro pop style survey",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-                {children}
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body className={`${spaceGrotesk.variable} antialiased`}>
+        {children}
+      </body>
+    </html>
+  );
 }
