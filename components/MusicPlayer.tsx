@@ -75,7 +75,7 @@ const MusicPlayer = forwardRef<MusicPlayerRef, {}>((props, ref) => {
         {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
       </button>
       <div className="text-xs text-gray-500 hidden sm:block">
-        <p>Music: Karl Casey @ White Bat Audio</p>
+        <p>Cinta-Mu Terbesar - VOG</p>
       </div>
     </div>
   );
