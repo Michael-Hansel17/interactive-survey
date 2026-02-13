@@ -105,7 +105,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             className="w-full flex flex-col gap-5 relative z-10"
             noValidate={true} // Matikan validasi browser bawaan (yang jelek)
         >
-            <h2 className="text-2xl sm:text-3xl font-bold leading-tight text-white mb-2 drop-shadow-md">
+            <h2 className="text-xl sm:text-2xl font-bold leading-tight text-white mb-2 drop-shadow-md">
                 {question.label}
             </h2>
 
@@ -119,7 +119,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                         onChange={(e) => handleChange(e.target.value)}
                         onKeyDown={handleKeyDown}
                         disabled={isSubmitting}
-                        className={`w-full text-lg p-4 bg-black/40 text-white border-2 rounded-xl focus:outline-none transition-all font-bold tracking-wide disabled:opacity-50 
+                        className={`w-full text-base p-4 bg-black/40 text-white border-2 rounded-xl focus:outline-none transition-all font-bold tracking-wide disabled:opacity-50 
                         ${error 
                             ? "border-red-500 shadow-[0_0_10px_#ef4444]" // Style Error (Merah Neon)
                             : "border-[var(--color-border)] focus:border-primary focus:shadow-[0_0_8px_var(--color-primary)]"

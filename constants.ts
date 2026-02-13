@@ -84,5 +84,4 @@ export const questions: Question[] = [
         required: true,
         next: null,
     },
-    
 ];
