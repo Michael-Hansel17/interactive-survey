@@ -39,6 +39,7 @@ export async function POST(req: Request) {
             answers["tempatTinggal"] || "-",
             answers["tempatKuliah"] || "-", // Ini akan berisi "UMN", "Pradita", dll.
             answers["nomorCG"] || "-",
+            answers["coach"] || "-"
         ];
 
         const auth = getJwtClient();
@@ -48,7 +49,7 @@ export async function POST(req: Request) {
         const sheetName = process.env.GOOGLE_SHEET_NAME || "Sheet1";
         
         // Range A:G artinya kita mengisi kolom A sampai G
-        const range = `${sheetName}!A:G`;
+        const range = `${sheetName}!A:H`;
 
         await sheets.spreadsheets.values.append({
             spreadsheetId,
