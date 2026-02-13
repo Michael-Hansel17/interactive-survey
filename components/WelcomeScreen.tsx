@@ -13,7 +13,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
         Welcome to the Survey Zone
       </h2>
       <p className="text-gray-300 mb-8 max-w-md mx-auto">
-        Get ready for a few questions. Your feedback is valuable to us.
+        Get ready for a few questions. Your answer is valuable to us.
       </p>
       <button
         onClick={onStart}
