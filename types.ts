@@ -15,7 +15,8 @@ export type QuestionId =
     | "statusCG"
     | "tempatTinggal"
     | "tempatKuliah"
-    | "nomorCG";
+    | "nomorCG"
+    | "coach"
 
 export type Question = {
     id: QuestionId;

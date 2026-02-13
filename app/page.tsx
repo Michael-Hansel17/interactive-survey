@@ -11,6 +11,7 @@ export default function Home() {
   const [history, setHistory] = useState<string[]>([]); // Untuk tombol Back
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isClient, setIsClient] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // STATE BARU
   const router = useRouter();
 
   useEffect(() => {
@@ -41,6 +42,8 @@ export default function Home() {
       setHistory((prev) => [...prev, currentQuestionId]);
       setCurrentQuestionId(nextId);
     } else {
+      setIsSubmitting(true);
+
       try {
         const response = await fetch("/api/submit", {
           method: "POST",
@@ -58,11 +61,14 @@ export default function Home() {
       } catch (error: any) {
         console.error("Error submitting survey:", error);
         alert("Gagal mengirim data: " + (error.message || "Coba lagi nanti."));
+        setIsSubmitting(false);
       }
     }
   };
 
   const handlePrevious = () => {
+    if (isSubmitting) return;
+
     setHistory((prev) => {
       const newHistory = [...prev];
       const prevId = newHistory.pop(); 
@@ -124,6 +130,7 @@ export default function Home() {
           onPrevious={handlePrevious}
           questionIndex={history.length} 
           isLastQuestion={!currentQuestion.next && !currentQuestion.branch}
+          isSubmitting={isSubmitting}
         />
       </div>
     </main>

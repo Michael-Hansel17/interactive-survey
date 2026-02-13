@@ -17,8 +17,21 @@ export const questions: Question[] = [
         placeholder: "08xxxxxxxxxx",
         inputProps: {
             inputMode: "tel",
-            pattern: "^(\\+62|62|0)\\d{8,13}$",
+            pattern: "^(\\+62|62|0)8[1-9][0-9]{6,11}$",
         },
+        required: true,
+        next: "statusCG",
+    },
+    {
+        id: "tempatKuliah",
+        label: "Sekarang lagi sibuk kuliah di mana?",
+        type: "choice",
+        options: [
+            { label: "UMN", value: "UMN" },
+            { label: "Pradita", value: "Pradita" },
+            { label: "Matana", value: "Matana" },
+            { label: "Others", value: "Others" },
+        ],
         required: true,
         next: "statusCG",
     },
@@ -31,11 +44,36 @@ export const questions: Question[] = [
             { label: "Belum Join", value: "Belum" },
         ],
         branch: [
-            { value: "Sudah", goTo: "nomorCG" },
+            { value: "Sudah", goTo: "coach" },
             { value: "Belum", goTo: "tempatTinggal" },
         ],
         next: "tempatTinggal",
         required: true,
+    },
+    {
+        id: "coach",
+        label: "Sekarang kamu dipengembalan coach siapa?",
+        type: "choice",
+        options: [
+            { label: "Coach Nael & Shella", value: "Coach Nael & Shella" },
+            { label: "Coach Ciella", value: "Coach Ciella" },
+            { label: "Coach Debora", value: "Coach Debora" },
+            { label: "Coach Erick", value: "Coach Erick" },
+            { label: "⁠Coach Kebob", value: "⁠Coach Kebob" },
+            { label: "Coach Keycia", value: "Coach Keycia" },
+            { label: "Coach Mike", value: "Coach Mike" },
+        ],
+        required: true,
+        next: "nomorCG",
+    },
+    {
+        id: "nomorCG",
+        label: "Cool! Kamu gabung di CG nomor berapa?",
+        type: "text",
+        placeholder: "Contoh: 59",
+        inputProps: { inputMode: "text" },
+        required: true,
+        next: null,
     },
     {
         id: "tempatTinggal",
@@ -44,29 +82,7 @@ export const questions: Question[] = [
         placeholder: "Contoh: Gading Serpong, BSD, Jakarta Barat...",
         inputProps: { inputMode: "text" },
         required: true,
-        next: "tempatKuliah",
-    },
-    {
-        id: "tempatKuliah",
-        // UBAH DISINI: Jadi Pilihan Ganda
-        label: "Sekarang lagi sibuk kuliah di mana?",
-        type: "choice",
-        options: [
-            { label: "UMN", value: "UMN" },
-            { label: "Pradita", value: "Pradita" },
-            { label: "Matana", value: "Matana" },
-            { label: "Others", value: "Others" },
-        ],
-        required: true,
-        next: null, // Selesai setelah memilih
-    },
-    {
-        id: "nomorCG",
-        label: "Cool! Kamu gabung di CG nomor berapa?",
-        type: "text",
-        placeholder: "Contoh: CG 59",
-        inputProps: { inputMode: "text" },
-        required: true,
         next: null,
     },
+    
 ];
