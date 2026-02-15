@@ -55,7 +55,7 @@ export const questions: Question[] = [
         label: "Sekarang kamu dipengembalan coach siapa?",
         type: "choice",
         options: [
-            { label: "Coach Nael & Shella", value: "Coach Nael & Shella" },
+            { label: "Coach Nael & Shella", value: "Nael & Shella" },
             { label: "Coach Ciella", value: "Ciella" },
             { label: "Coach Debora", value: "Debora" },
             { label: "Coach Erick", value: "Erick" },
