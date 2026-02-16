@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import { Volume2, VolumeX } from "lucide-react";
 
 export interface MusicPlayerRef {
   playAudio: () => void;
@@ -9,7 +15,7 @@ export interface MusicPlayerRef {
 }
 
 const MusicPlayer = forwardRef<MusicPlayerRef, {}>((props, ref) => {
-  const songUrl = "/song.mp3"; 
+  const songUrl = "/song.mp3";
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isMuted, setIsMuted] = useState(true);
@@ -17,25 +23,28 @@ const MusicPlayer = forwardRef<MusicPlayerRef, {}>((props, ref) => {
 
   const playAudio = (muted = true) => {
     if (hasPlayedRef.current) return;
-    
+
     const audio = audioRef.current;
     if (audio) {
       audio.muted = muted;
       audio.volume = 0.2;
-      audio.play().then(() => {
-        hasPlayedRef.current = true;
-        setIsMuted(muted);
-      }).catch(error => {
-        console.error("Music play failed:", error);
-      });
+      audio
+        .play()
+        .then(() => {
+          hasPlayedRef.current = true;
+          setIsMuted(muted);
+        })
+        .catch((error) => {
+          console.error("Music play failed:", error);
+        });
     }
   };
-  
+
   const unmuteAndPlay = () => {
     setIsMuted(false);
     playAudio(false);
-  }
-  
+  };
+
   useImperativeHandle(ref, () => ({
     playAudio: () => playAudio(true),
     unmuteAndPlay,
@@ -67,8 +76,8 @@ const MusicPlayer = forwardRef<MusicPlayerRef, {}>((props, ref) => {
   return (
     <div className="fixed bottom-4 right-4 flex items-center gap-2 z-50">
       <audio ref={audioRef} src={songUrl} />
-      <button 
-        onClick={toggleMute} 
+      <button
+        onClick={toggleMute}
         className="p-2 bg-black/50 rounded-full text-white hover:bg-black/80 transition-colors"
         aria-label={isMuted ? "Unmute" : "Mute"}
       >

@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import type { Question } from "../types";
 
 interface QuestionFormProps {
     question: Question;
-    value: string;
+    value: string; // The text answer (e.g., "UMN" or "Custom Input")
     onChange: (value: string) => void;
     onSubmit: () => void;
     onPrevious: () => void;
@@ -24,27 +24,38 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 }) => {
     const formRef = useRef<HTMLFormElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const [error, setError] = useState<string | null>(null); // State Error Baru
+    const [error, setError] = useState<string | null>(null);
+    const [selectedOption, setSelectedOption] = useState<string>("");
 
-    const isStandardOption = (val: string) => {
-        return question.options?.some((opt) => opt.value === val && opt.value !== "Others");
-    };
+    useEffect(() => {
+        if (!value) {
+            setSelectedOption("");
+            return;
+        }
+        
+        const isStandard = question.options?.some(opt => opt.value === value && opt.value !== "Others");
+        if (isStandard) {
+            setSelectedOption(value);
+        } else {
+            setSelectedOption("Others");
+        }
+    }, [value, question.options]);
 
-    const isOtherSelected = value === "Others" || (!!value && !isStandardOption(value));
-
-    // Validasi Input
     const validate = (): boolean => {
-        // 1. Cek Required
         if (question.required && !value.trim()) {
             setError("Bagian ini harus diisi ya! 😅");
             return false;
         }
 
-        // 2. Cek Pattern (Regex) - Khusus Text Input
+        if (selectedOption === "Others" && value === "Others") {
+            setError("Tolong tuliskan detailnya ya! ✍️");
+            inputRef.current?.focus(); 
+            return false;
+        }
+
         if (question.type === "text" && question.inputProps?.pattern && value) {
             const regex = new RegExp(question.inputProps.pattern);
             if (!regex.test(value)) {
-                // Pesan Error Khusus Nomor Telepon
                 if (question.id === 'nomorTelepon') {
                      setError("Nomor HP tidak valid. Pastikan format Indonesia (08xx/628xx) 📱");
                 } else {
@@ -54,48 +65,38 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             }
         }
 
-        setError(null); // Clear error jika lolos
+        setError(null);
         return true;
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && !isSubmitting) {
-            e.preventDefault();
-            if (validate()) {
-                onSubmit();
-            }
-        }
     };
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (isSubmitting) return;
-
-        if (validate()) {
-            onSubmit();
-        }
-    };
-
-    // Reset error saat user mulai mengetik lagi
-    const handleChange = (val: string) => {
-        if (error) setError(null);
-        onChange(val);
+        if (validate()) onSubmit();
     };
 
     const handleOptionPick = (optionValue: string) => {
         if (isSubmitting) return;
-        if (error) setError(null);
+        setError(null);
+        setSelectedOption(optionValue); 
 
         if (optionValue === "Others") {
-            handleChange("Others");
+            onChange("Others");
             setTimeout(() => inputRef.current?.focus(), 100);
         } else {
-            handleChange(optionValue);
+            onChange(optionValue);
         }
     };
 
     const handleOtherInputChange = (text: string) => {
-        if (!isSubmitting) handleChange(text);
+        if (!isSubmitting) onChange(text);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && !isSubmitting) {
+            e.preventDefault();
+            if (validate()) onSubmit();
+        }
     };
 
     return (
@@ -103,30 +104,31 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             ref={formRef}
             onSubmit={handleFormSubmit}
             className="w-full flex flex-col gap-5 relative z-10"
-            noValidate={true} // Matikan validasi browser bawaan (yang jelek)
+            noValidate
         >
             <h2 className="text-xl sm:text-2xl font-bold leading-tight text-white mb-2 drop-shadow-md">
                 {question.label}
             </h2>
 
-            {/* TEXT INPUT */}
             {question.type === "text" && (
                 <div className="w-full">
                     <input
                         type="text"
                         placeholder={question.placeholder}
                         value={value}
-                        onChange={(e) => handleChange(e.target.value)}
+                        onChange={(e) => {
+                             setError(null); 
+                             onChange(e.target.value);
+                        }}
                         onKeyDown={handleKeyDown}
                         disabled={isSubmitting}
                         className={`w-full text-base p-4 bg-black/40 text-white border-2 rounded-xl focus:outline-none transition-all font-bold tracking-wide disabled:opacity-50 
                         ${error 
-                            ? "border-red-500 shadow-[0_0_10px_#ef4444]" // Style Error (Merah Neon)
+                            ? "border-red-500 shadow-[0_0_10px_#ef4444]" 
                             : "border-[var(--color-border)] focus:border-primary focus:shadow-[0_0_8px_var(--color-primary)]"
                         }`}
                         autoFocus
                     />
-                    {/* PESAN ERROR DI BAWAH INPUT */}
                     {error && (
                         <p className="text-red-400 text-sm font-bold mt-2 animate-pulse bg-black/20 p-2 rounded-lg inline-block border border-red-500/50">
                             ⚠️ {error}
@@ -135,10 +137,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 </div>
             )}
 
-            {/* CHOICE INPUT */}
             {question.type === "choice" && question.options && (
                 <div className="flex flex-col gap-3">
-                     {/* Pesan Error untuk Choice (Jika belum pilih) */}
                      {error && (
                         <p className="text-red-400 text-sm font-bold mb-2 animate-pulse">
                             ⚠️ {error}
@@ -146,7 +146,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     )}
 
                     {question.options.map((opt) => {
-                        const isChecked = opt.value === "Others" ? isOtherSelected : value === opt.value;
+                        const isChecked = selectedOption === opt.value;
+                        
                         return (
                             <div key={opt.value} className="flex flex-col gap-2">
                                 <label
@@ -208,7 +209,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 </div>
             )}
 
-            {/* BUTTONS */}
+            {/* BUTTONS (Unchanged) */}
             <div className="flex gap-4 mt-6 pt-4 border-t border-[var(--color-border)]">
                 {questionIndex > 0 && (
                     <button
